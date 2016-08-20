@@ -5,8 +5,6 @@ from os.path import join, dirname, exists
 import six
 import codecs
 import unidecode
-#import unicodedata
-
 
 BLACKLIST = frozenset([
     'si.edu',
@@ -288,13 +286,16 @@ class Swot(object):
     @classmethod
     def __is_academic_domain(cls, domain):
         path = '{0}.txt'.format(
-            join(
-                'data/lib/domains',
-                join(*reversed(domain.registered_domain.split('.')))
-            )
+                join(
+                        'data/lib/domains',
+                        join(*reversed(domain.registered_domain.split('.')))
+                )
         )
 
         if exists(join(dirname(__file__), path)):
+            return True
+
+        if exists(join(dirname(__file__), 'swot_data', path)):
             return True
 
         return False
@@ -312,16 +313,24 @@ class Swot(object):
         if [b for b in BLACKLIST if re.search(r'(\A|\.){0}'.format(re.escape(b)), domain_str)]:
             return 'unknown'
 
-        if (domain.tld in ACADEMIC_TLDS) | (Swot.__is_academic_domain(domain)):
+        if (domain.tld in ACADEMIC_TLDS) or (Swot.__is_academic_domain(domain)):
             path = '{0}.txt'.format(
-                join(
-                    'data/lib/domains',
-                    join(*reversed(domain.registered_domain.split('.')))
-                )
+                    join(
+                            'data/lib/domains',
+                            join(*reversed(domain.registered_domain.split('.')))
+                    )
             )
             abs_path = join(dirname(__file__), path)
-            if(exists(abs_path)):
-                f = codecs.open(abs_path, "r", encoding = "utf-8")
+            lib_path = join(dirname(__file__), 'swot_data', path)
+            # print "search %s" + lib_path
+
+            if (exists(abs_path)):
+                f = codecs.open(abs_path, "r", encoding="utf-8")
+                content = f.read()
+                f.close
+                return re.sub(r'\n', '', unidecode.unidecode(content))
+            elif (exists(lib_path)):
+                f = codecs.open(lib_path, "r", encoding="utf-8")
                 content = f.read()
                 f.close
                 return re.sub(r'\n', '', unidecode.unidecode(content))
@@ -329,10 +338,7 @@ class Swot(object):
 
         return 'unknown'
 
+
 if __name__ == '__main__':
+    #print(Swot.school_name(sys.argv[1]))
     #print(Swot.is_academic(sys.argv[1]))
-    #print(Swot.is_academic("ucdavis.edu"))
-    #print(Swot.is_academic("lbl.gov"))
-    #print(Swot.school_name("lbl.gov"))
-    print(Swot.school_name(sys.argv[1]))
-    print(Swot.is_academic(sys.argv[1]))
