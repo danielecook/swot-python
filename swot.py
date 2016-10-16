@@ -275,7 +275,7 @@ class Swot(object):
         if [b for b in BLACKLIST if re.search(r'(\A|\.){0}'.format(re.escape(b)), domain_str)]:
             return False
 
-        if domain.tld in ACADEMIC_TLDS:
+        if domain.suffix in ACADEMIC_TLDS:
             return True
 
         if Swot.__is_academic_domain(domain):
@@ -313,7 +313,7 @@ class Swot(object):
         if [b for b in BLACKLIST if re.search(r'(\A|\.){0}'.format(re.escape(b)), domain_str)]:
             return 'unknown'
 
-        if (domain.tld in ACADEMIC_TLDS) or (Swot.__is_academic_domain(domain)):
+        if (domain.suffix in ACADEMIC_TLDS) or (Swot.__is_academic_domain(domain)):
             path = '{0}.txt'.format(
                     join(
                             'data/lib/domains',
