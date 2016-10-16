@@ -303,15 +303,15 @@ class Swot(object):
     @classmethod
     def school_name(cls, domain_str):
         if not domain_str or not isinstance(domain_str, six.string_types):
-            return 'domain error'
+            raise TypeError('domain must be a string')
 
         domain_str = domain_str.strip().lower()
         domain = tldextract.extract(domain_str)
         if not domain.registered_domain:
-            return 'domain error'
+            raise TypeError('domain is not even registered')
 
         if [b for b in BLACKLIST if re.search(r'(\A|\.){0}'.format(re.escape(b)), domain_str)]:
-            return 'unknown'
+            return None
 
         if (domain.suffix in ACADEMIC_TLDS) or (Swot.__is_academic_domain(domain)):
             path = '{0}.txt'.format(
@@ -334,9 +334,9 @@ class Swot(object):
                 content = f.read()
                 f.close
                 return re.sub(r'\n', '', unidecode.unidecode(content))
-            return 'unknown'
+            return None
 
-        return 'unknown'
+        return None
 
 
 if __name__ == '__main__':
