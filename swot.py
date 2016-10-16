@@ -340,5 +340,5 @@ class Swot(object):
 
 
 if __name__ == '__main__':
-    #print(Swot.school_name(sys.argv[1]))
-    #print(Swot.is_academic(sys.argv[1]))
+    print(Swot.school_name(sys.argv[1]))
+    print(Swot.is_academic(sys.argv[1]))
